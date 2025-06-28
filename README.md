@@ -1,5 +1,6 @@
 <div align="center">
-<img src="https://github.com/user-attachments/assets/a0809748-3cb1-4732-9c5a-acfa90cc72d1" width="720" alt="lmcache logo">
+<img src="https://github.com/user-attachments/assets/50c58c75-f37a-45e8-bf82-793439480f0f" width="720" alt="lmcache logo">
+
 </a>
 </div>
 
