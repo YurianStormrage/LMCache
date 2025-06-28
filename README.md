@@ -102,13 +102,13 @@ If you use LMCache for your research, please cite our papers:
 }
 
 @inproceedings{10.1145/3689031.3696098,
-author = {Yao, Jiayi and Li, Hanchen and Liu, Yuhan and Ray, Siddhant and Cheng, Yihua and Zhang, Qizheng and Du, Kuntai and Lu, Shan and Jiang, Junchen},
-title = {CacheBlend: Fast Large Language Model Serving for RAG with Cached Knowledge Fusion},
-year = {2025},
-url = {https://doi.org/10.1145/3689031.3696098},
-doi = {10.1145/3689031.3696098},
-booktitle = {Proceedings of the Twentieth European Conference on Computer Systems},
-pages = {94–109},
+  author = {Yao, Jiayi and Li, Hanchen and Liu, Yuhan and Ray, Siddhant and Cheng, Yihua and Zhang, Qizheng and Du, Kuntai and Lu, Shan and Jiang, Junchen},
+  title = {CacheBlend: Fast Large Language Model Serving for RAG with Cached Knowledge Fusion},
+  year = {2025},
+  url = {https://doi.org/10.1145/3689031.3696098},
+  doi = {10.1145/3689031.3696098},
+  booktitle = {Proceedings of the Twentieth European Conference on Computer Systems},
+  pages = {94–109},
 }
 
   
