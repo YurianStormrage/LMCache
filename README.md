@@ -44,6 +44,8 @@ Try LMCache with pre-built vllm docker images [here](https://docs.lmcache.ai/dev
 
 Please refer to our detailed documentation for [LMCache V1](https://docs.lmcache.ai/getting_started/installation.html#install-from-source-v1) and [LMCache V0](https://docs.lmcache.ai/getting_started/installation.html#install-from-source-v0)
 
+For large-scale deplyment, please refer to [vLLM Production Stack](https://github.com/vllm-project/production-stack)!
+
 # Interested in Connecting?
 Fill out the [interest form](https://forms.gle/mQfQDUXbKfp2St1z7), [sign up for our newsletter](https://mailchi.mp/tensormesh/lmcache-sign-up-newsletter), or [drop an email](contact@lmcache.ai), and our team will reach out to you!
 
@@ -99,12 +101,17 @@ If you use LMCache for your research, please cite our papers:
   year={2024}
 }
 
-@article{yao2024cacheblend,
-  title={CacheBlend: Fast Large Language Model Serving with Cached Knowledge Fusion},
-  author={Yao, Jiayi and Li, Hanchen and Liu, Yuhan and Ray, Siddhant and Cheng, Yihua and Zhang, Qizheng and Du, Kuntai and Lu, Shan and Jiang, Junchen},
-  journal={arXiv preprint arXiv:2405.16444},
-  year={2024}
+@inproceedings{10.1145/3689031.3696098,
+author = {Yao, Jiayi and Li, Hanchen and Liu, Yuhan and Ray, Siddhant and Cheng, Yihua and Zhang, Qizheng and Du, Kuntai and Lu, Shan and Jiang, Junchen},
+title = {CacheBlend: Fast Large Language Model Serving for RAG with Cached Knowledge Fusion},
+year = {2025},
+url = {https://doi.org/10.1145/3689031.3696098},
+doi = {10.1145/3689031.3696098},
+booktitle = {Proceedings of the Twentieth European Conference on Computer Systems},
+pages = {94–109},
 }
+
+  
 ```
 
 ## License
