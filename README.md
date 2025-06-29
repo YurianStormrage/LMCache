@@ -44,7 +44,7 @@ Try LMCache with pre-built vllm docker images [here](https://docs.lmcache.ai/dev
 
 Please refer to our detailed documentation for [LMCache V1](https://docs.lmcache.ai/getting_started/installation.html#install-from-source-v1) and [LMCache V0](https://docs.lmcache.ai/getting_started/installation.html#install-from-source-v0)
 
-For large-scale deplyment, please refer to [vLLM Production Stack](https://github.com/vllm-project/production-stack)!
+For large-scale deployment, please refer to [vLLM Production Stack](https://github.com/vllm-project/production-stack)!
 
 # Interested in Connecting?
 Fill out the [interest form](https://forms.gle/mQfQDUXbKfp2St1z7), [sign up for our newsletter](https://mailchi.mp/tensormesh/lmcache-sign-up-newsletter), or [drop an email](contact@lmcache.ai), and our team will reach out to you!
