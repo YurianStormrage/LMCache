@@ -55,6 +55,18 @@ def CreateStorageBackends(
 
     storage_backends: OrderedDict[str, StorageBackendInterface] = OrderedDict()
 
+    if config.pfs_path is not None:
+        # First Party
+        from lmcache.v1.storage_backend.pfs_backend import PfsBackend
+
+        pfs_backend = PfsBackend(config, loop,
+            memory_allocator, dst_device
+        )
+        backend_name = str(pfs_backend)
+        storage_backends[backend_name] = pfs_backend
+
+        return storage_backends
+
     if config.enable_nixl:
         # First Party
         from lmcache.v1.storage_backend.nixl_backend import NixlBackend
