@@ -128,6 +128,8 @@ class LMCacheEngineConfig:
     weka_path: Optional[str] = None
     # (Optional) The path under the File-based backend cache will be stored
     gds_path: Optional[str] = None
+    # (Optional) The path under the PFS mount that the cache will be stored
+    pfs_path: Optional[str] = None
     # (Optional) GDS/CuFile related configurations
     # Size of CuFile Buffer in MiB
     cufile_buffer_size: Optional[int] = None
@@ -188,6 +190,7 @@ class LMCacheEngineConfig:
         audit_actual_remote_url: Optional[str] = None,
         weka_path: Optional[str] = None,
         gds_path: Optional[str] = None,
+        pfs_path: Optional[str] = None,
         cufile_buffer_size: Optional[int] = None,
         extra_config: Optional[dict] = None,
         save_unfull_chunk: bool = True,
@@ -234,6 +237,7 @@ class LMCacheEngineConfig:
             audit_actual_remote_url,
             weka_path,
             gds_path,
+            pfs_path,
             cufile_buffer_size,
             extra_config,
             save_unfull_chunk,
@@ -407,6 +411,7 @@ class LMCacheEngineConfig:
 
         weka_path = config.get("weka_path", None)
         gds_path = config.get("gds_path", None)
+        pfs_path = config.get("pfs_path", None)
         cufile_buffer_size = config.get("cufile_buffer_size", None)
 
         save_unfull_chunk = config.get("save_unfull_chunk", True)
@@ -465,6 +470,7 @@ class LMCacheEngineConfig:
                 audit_actual_remote_url,
                 weka_path,
                 gds_path,
+                pfs_path,
                 cufile_buffer_size,
                 extra_config,
                 save_unfull_chunk,
@@ -669,6 +675,10 @@ class LMCacheEngineConfig:
             get_env_name("gds_path"),
             config.gds_path,
         )
+        config.pfs_path = parse_env(
+            get_env_name("pfs_path"),
+            config.pfs_path,
+        )
         config.cufile_buffer_size = to_int(
             parse_env(
                 get_env_name("cufile_buffer_size"),
@@ -766,6 +776,7 @@ class LMCacheEngineConfig:
             "nixl_proxy_port": self.nixl_proxy_port,
             "weka_path": self.weka_path,
             "gds_path": self.gds_path,
+            "pfs_path": self.pfs_path,
             "extra_config": self.extra_config,
             "save_unfull_chunk": self.save_unfull_chunk,
             "blocking_timeout_secs": self.blocking_timeout_secs,

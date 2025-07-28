@@ -805,7 +805,7 @@ class LMCacheEngineBuilder:
                 return nixl_cpu_mem_allocator
             return AdHocMemoryAllocator(config.nixl_buffer_device)
 
-        if config.weka_path is not None or config.gds_path is not None:
+        if config.weka_path is not None or config.gds_path is not None or config.pfs_path is not None:
             assert config.cufile_buffer_size is not None
             return CuFileMemoryAllocator(config.cufile_buffer_size * 1024**2)
 
