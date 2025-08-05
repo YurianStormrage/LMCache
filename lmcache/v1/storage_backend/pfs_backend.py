@@ -18,6 +18,7 @@ from readerwriterlock import rwlock
 import torch
 import mmap
 import numpy as np
+import random
 
 logger = init_logger(__name__)
 
@@ -30,6 +31,8 @@ class PfsBackend(StorageBackendInterface):
     """
     分布式文件系统存储后端实现
     """
+    def __str__(self):
+        return self.__class__.__name__
 
     def __init__(
         self,
@@ -86,7 +89,7 @@ class PfsBackend(StorageBackendInterface):
         # TODO: implement monitor
         self.stats = None
 
-        self.rand = np.random.mtrand
+        self.rand = random.Random(self.dst_device)
 
         # 缓存结构
 
@@ -173,7 +176,7 @@ class PfsBackend(StorageBackendInterface):
         """
         Convert a CacheEngineKey to a file path in PFS.
         """
-        return os.path.join(self.pfs_path, str(key) + _DATA_FILE_SUFFIX)
+        return os.path.join(self.pfs_path, key.to_string().replace('/', '_') + _DATA_FILE_SUFFIX)
 
     def exists_in_put_tasks(self, key):
         logger.debug(f"Checking if key {key} exists in put tasks")
@@ -305,16 +308,16 @@ class PfsBackend(StorageBackendInterface):
                 ctypes.c_int(1),
             )
 
-        os.rename(tmp_path, path + _DATA_FILE_SUFFIX)
+        os.rename(tmp_path, path)
 
         return metadata
 
     def insert_key(self, key: CacheEngineKey, memory_obj: MemoryObj) -> None:
-        path, _, _, _ = self._key_to_path(key)
+        path = self._key_to_path(key)
         size = memory_obj.get_size()
         shape = memory_obj.metadata.shape
         dtype = memory_obj.metadata.dtype
-        with self.hot_lock:
+        with self.hot_wlock:
             self.hot_cache[key] = DiskCacheMetadata(path, size, shape, dtype)
 
     def submit_prefetch_task(

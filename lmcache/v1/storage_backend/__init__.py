@@ -32,6 +32,7 @@ from lmcache.v1.storage_backend.local_cpu_backend import LocalCPUBackend
 from lmcache.v1.storage_backend.local_disk_backend import LocalDiskBackend
 from lmcache.v1.storage_backend.remote_backend import RemoteBackend
 from lmcache.v1.storage_backend.weka_gds_backend import WekaGdsBackend
+from lmcache.v1.storage_backend.pfs_backend import PfsBackend
 
 if TYPE_CHECKING:
     # First Party
@@ -115,9 +116,6 @@ def CreateStorageBackends(
         backend_name = str(remote_backend)
         storage_backends[backend_name] = remote_backend
     if config.pfs_path is not None:
-        # First Party
-        from lmcache.v1.storage_backend.pfs_backend import PfsBackend
-
         pfs_backend = PfsBackend(config, loop,
             memory_allocator, dst_device
         )
