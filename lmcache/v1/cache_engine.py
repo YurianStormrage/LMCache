@@ -46,6 +46,7 @@ from lmcache.v1.memory_management import (
     MemoryFormat,
     MixedMemoryAllocator,
     NixlCPUMemoryAllocator,
+    PinMemoryAllocator
 )
 from lmcache.v1.storage_backend.storage_manager import StorageManager
 from lmcache.v1.token_database import (
@@ -503,8 +504,8 @@ class LMCacheEngine:
 
         # TODO(Jiayi): Remove the following for loop with batched operations
         for key, memory_obj in zip(reordered_keys, reordered_memory_objs, strict=False):
-            if self.remove_after_retrieve:
-                self.storage_manager.remove(key)
+            # if self.remove_after_retrieve:
+            #     self.storage_manager.remove(key)
             memory_obj.ref_count_down()
 
         retrieved_tokens = torch.sum(ret_mask)
@@ -770,6 +771,8 @@ class LMCacheEngineBuilder:
         config: LMCacheEngineConfig,
         metadata: LMCacheEngineMetadata,
     ) -> MemoryAllocatorInterface:
+        if config.pfs_path is not None:
+            return PinMemoryAllocator(int(config.max_local_cpu_size * 1024**3))
         if config.enable_nixl:
             assert config.nixl_buffer_device is not None
             # TODO (Jiayi): make this less hacky
@@ -805,7 +808,7 @@ class LMCacheEngineBuilder:
                 return nixl_cpu_mem_allocator
             return AdHocMemoryAllocator(config.nixl_buffer_device)
 
-        if config.weka_path is not None or config.gds_path is not None or config.pfs_path is not None:
+        if config.weka_path is not None or config.gds_path is not None:
             assert config.cufile_buffer_size is not None
             return CuFileMemoryAllocator(config.cufile_buffer_size * 1024**2)
 

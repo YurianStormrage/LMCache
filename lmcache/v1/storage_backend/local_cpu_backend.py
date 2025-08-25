@@ -34,6 +34,8 @@ from lmcache.v1.memory_management import (
     MemoryObj,
     MixedMemoryAllocator,
     NixlCPUMemoryAllocator,
+    CuFileMemoryAllocator,
+    PinMemoryAllocator
 )
 from lmcache.v1.storage_backend.abstract_backend import StorageBackendInterface
 
@@ -241,7 +243,7 @@ class LocalCPUBackend(StorageBackendInterface):
 
         assert isinstance(self.memory_allocator, MixedMemoryAllocator) or isinstance(
             self.memory_allocator, NixlCPUMemoryAllocator
-        )
+        ) or isinstance(self.memory_allocator, CuFileMemoryAllocator)
 
         evict_keys = []
         with self.cpu_lock:
@@ -299,7 +301,7 @@ class LocalCPUBackend(StorageBackendInterface):
 
         assert isinstance(self.memory_allocator, MixedMemoryAllocator) or isinstance(
             self.memory_allocator, NixlCPUMemoryAllocator
-        )
+        ) or isinstance(self.memory_allocator, PinMemoryAllocator)
 
         # NOTE: Tune this number for performance.
         # Setting it to small will cause more eviction overhead.
@@ -326,6 +328,8 @@ class LocalCPUBackend(StorageBackendInterface):
                 evict_key_all_layer = evict_key.split_layers(batch_size)
                 evict_keys.extend(evict_key_all_layer)
                 for key in evict_key_all_layer:
+                    if key not in self.hot_cache:
+                        continue
                     old_mem_objs.append(self.hot_cache[key])
 
                 # if len(old_mem_objs) < blocks_to_free:

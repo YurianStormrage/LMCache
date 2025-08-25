@@ -16,6 +16,7 @@
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any, Optional, Union
 import os
+import time
 
 # Third Party
 from vllm.config import VllmConfig
@@ -331,6 +332,47 @@ class LMCacheConnectorMetadata(KVConnectorMetadata):
         """
         self.requests.append(req_meta)
 
+def singleton(cls):
+    instances = {}
+    def getinstance(*args, **kwargs):
+        if cls not in instances:
+            instances[cls] = cls(*args, **kwargs)
+        return instances[cls]
+    return getinstance
+
+@singleton
+@dataclass
+class Profiler:
+    # Profiler for the connector
+    import threading
+    load_lock: threading.Lock = field(default_factory=threading.Lock)
+    save_lock: threading.Lock = field(default_factory=threading.Lock)
+    total_load_time: float = 0.0
+    total_save_time: float = 0.0
+    layerwise_load_time: dict[str, float] = field(default_factory=dict)
+    layerwise_save_time: dict[str, float] = field(default_factory=dict)
+    def update_load_time(self, layer_name: str, load_time: float):
+        """Update the load time for a specific layer."""
+        with self.load_lock:
+            self.total_load_time += load_time
+            if layer_name not in self.layerwise_load_time:
+                self.layerwise_load_time[layer_name] = 0.0
+            self.layerwise_load_time[layer_name] += load_time
+    def update_save_time(self, layer_name: str, save_time: float):
+        """Update the save time for a specific layer."""
+        with self.save_lock:
+            self.total_save_time += save_time
+            if layer_name not in self.layerwise_save_time:
+                self.layerwise_save_time[layer_name] = 0.0
+            self.layerwise_save_time[layer_name] += save_time
+    def print_summary(self):
+        """Print the summary of the profiler."""
+        logger.info("Total load time: %.2f ms", self.total_load_time)
+        logger.info("Total save time: %.2f ms", self.total_save_time)
+        for layer, load_time in self.layerwise_load_time.items():
+            logger.info("Layer %s load time: %.2f ms", layer, load_time)
+        for layer, save_time in self.layerwise_save_time.items():
+            logger.info("Layer %s save time: %.2f ms", layer, save_time)
 
 class LMCacheConnectorV1Impl:
     def __init__(
@@ -383,7 +425,7 @@ class LMCacheConnectorV1Impl:
 
         self._block_size = vllm_config.cache_config.block_size
 
-        # request_id -> (vllm cached tokes, lmcache cached tokens)
+        # request_id -> (vllm cached tokens, lmcache cached tokens)
         self.load_specs: dict[str, LoadSpec] = {}
 
         self.kv_cache_manager: Optional[KVCacheManager] = None
@@ -460,6 +502,7 @@ class LMCacheConnectorV1Impl:
 
         self.lmcache_engine.post_init(kvcaches=kvcaches)
 
+        # what's the role of this loop?
         for idx, request in enumerate(metadata.requests):
             if request.load_spec is None:
                 continue
@@ -467,6 +510,7 @@ class LMCacheConnectorV1Impl:
         self.layerwise_retrievers = []
         for idx, request in enumerate(metadata.requests):
             if request.load_spec is None:
+                logger.warning("In connector.start_load_kv, but the load_spec is None")
                 continue
 
             tokens = request.token_ids
@@ -495,6 +539,7 @@ class LMCacheConnectorV1Impl:
                         slot_mapping=slot_mapping[:lmcache_cached_tokens],
                     )
                 else:
+                    logger.debug(f"Using layerwise retrieval for tokens {tokens[:lmcache_cached_tokens]}")
                     layerwise_retriever = self.lmcache_engine.retrieve_layer(
                         tokens[:lmcache_cached_tokens],
                         token_mask[:lmcache_cached_tokens],

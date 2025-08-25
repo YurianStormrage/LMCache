@@ -1,6 +1,10 @@
 local_cpu: false
-cufile_buffer_size: 4096
-pfs_path: "/data/pqa/pfs"
-use_cufile: true
+cufile_buffer_size: 8192
+#pfs_path: "/data/pqa/pfs"
+#pfs_path: "/data3/local/"
+pfs_path: "/data3/stage/"
 # log_level: We can only use LMCACHE_LOG_LEVEL
-use_direct_io: true
+remote_serde: "naive"
+extra_config:
+  use_cufile: false
+  use_direct_io: false
